@@ -1,0 +1,39 @@
+{
+    "php_ext": "fileinfo",
+    "chmod": [
+        {
+            "mode": 777,
+            "path": "/storage"
+        },
+        {
+            "mode": 777,
+            "path": "/bootstrap"
+        },
+        {
+            "mode": 777,
+            "path": "/resources"
+        },
+        {
+            "mode": 777,
+            "path": "/addons"
+        }
+    ],
+    "success_url": "/install.php",
+    "php_versions": "72,73,74",
+    "db_config": "",
+    "admin_username": "",
+    "admin_password": "",
+    "run_path": "/public",
+    "remove_file": [
+        "/.user.ini"
+    ],
+    "enable_functions": [
+        "passthru",
+        "proc_open",
+        "proc_get_status",
+        "symlink",
+        "putenv",
+        "exec",
+        "shell_exec"
+    ]
+}
