@@ -27,12 +27,24 @@
                             <div class="box-shadow1">
                                 @if($video['aliyun_video_id'])
                                     @include('frontend.components.player.aliyun', ['video' => $video])
-                                @elseif($video['tencent_video_id'])
-                                    @include('frontend.components.player.tencent', ['video' => $video])
                                 @else
-                                    @include('frontend.components.player.aliyunSimple', ['video' => $video])
+                                    @include('frontend.components.player.xg', ['video' => $video])
                                 @endif
                             </div>
+                            @if($nextVideo)
+                                <div class="need-login" style="display: none">
+                                    <p class="mt-5"><a class="btn btn-primary"
+                                                       href="{{route('video.show', [$nextVideo['course_id'], $nextVideo['id'], $nextVideo['slug']])}}">下一集</a>
+                                    </p>
+                                    <p class="login-text">
+                                        下一集：{{$nextVideo['title']}}
+                                    </p>
+                                </div>
+                            @else
+                                <div class="need-login" style="display: none">
+                                    <h3>厉害，课程已全部看完！</h3>
+                                </div>
+                            @endif
                         @else
                             <div class="buy-this-video">
                                 <h3>{{$video['title']}}</h3>
