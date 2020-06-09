@@ -13,24 +13,26 @@ namespace App\Constant;
 
 class ApiV2Constant
 {
-    const PARAMS_ERROR = 'params error';
-    const PLEASE_INPUT_IMAGE_CAPTCHA = 'image_captcha.required';
-    const IMAGE_CAPTCHA_ERROR = 'image_captcha_error';
+    public const YES = 1;
 
-    const USER_MOBILE_NOT_EXISTS = 'mobile not exists';
-    const MOBILE_HAS_EXISTS = 'mobile has exists';
-    const MOBILE_OR_PASSWORD_ERROR = 'mobile not exists or password error';
-    const MOBILE_CODE_ERROR = 'mobile code error';
+    public const PARAMS_ERROR = 'params error';
+    public const PLEASE_INPUT_IMAGE_CAPTCHA = 'image_captcha.required';
+    public const IMAGE_CAPTCHA_ERROR = 'image_captcha_error';
 
-    const MEMBER_HAS_LOCKED = 'current user was locked,please contact administrator';
+    public const USER_MOBILE_NOT_EXISTS = 'mobile not exists';
+    public const MOBILE_HAS_EXISTS = 'mobile has exists';
+    public const MOBILE_OR_PASSWORD_ERROR = 'mobile not exists or password error';
+    public const MOBILE_CODE_ERROR = 'mobile code error';
 
-    const VIDEO_NO_AUTH = 'please buy this video before see';
+    public const MEMBER_HAS_LOCKED = 'current user was locked,please contact administrator';
 
-    const SMS_CODE_EXPIRE = 60;
-    const MOBILE_CODE_CACHE_KEY = 'm:%s';
+    public const VIDEO_NO_AUTH = 'please buy this video before see';
 
-    const ERROR_CODE = 1;
-    const ERROR_NO_AUTH_CODE = 401;
+    public const SMS_CODE_EXPIRE = 60;
+    public const MOBILE_CODE_CACHE_KEY = 'm:%s';
+
+    public const ERROR_CODE = 1;
+    public const ERROR_NO_AUTH_CODE = 401;
 
     /**
      * @OpenApi\Annotations\Schemas(
@@ -48,13 +50,17 @@ class ApiV2Constant
      *         @OA\Property(property="published_at",type="string",description="上线时间"),
      *         @OA\Property(property="seo_keywords",type="string",description="seo_keywords"),
      *         @OA\Property(property="seo_description",type="string",description="seo_description"),
-     *         @OA\Property(property="category_id",type="string",description="分类id"),
+     *         @OA\Property(property="category_id",type="integer",description="分类id"),
+     *         @OA\Property(property="is_rec",type="integer",description="推荐"),
+     *         @OA\Property(property="user_count",type="integer",description="订阅人数"),
+     *         @OA\Property(property="videos_count",type="integer",description="视频数量"),
+     *         @OA\Property(property="category",type="object",ref="#/components/schemas/CourseCategory")
      *     )
      * )
      */
-    const MODEL_COURSE_FIELD = [
+    public const MODEL_COURSE_FIELD = [
         'id', 'title', 'slug', 'thumb', 'charge', 'short_description', 'render_desc', 'seo_keywords',
-        'seo_description', 'published_at', 'category_id',
+        'seo_description', 'published_at', 'is_rec', 'user_count', 'videos_count', 'category',
     ];
 
     /**
@@ -76,12 +82,13 @@ class ApiV2Constant
      *         @OA\Property(property="seo_keywords",type="integer",description="seo_keywords"),
      *         @OA\Property(property="seo_description",type="integer",description="seo_description"),
      *         @OA\Property(property="chapter_id",type="integer",description="章节id"),
+     *         @OA\Property(property="is_ban_sell",type="integer",description="禁止销售，1是，0否"),
      *     ),
      * )
      */
-    const MODEL_VIDEO_FIELD = [
+    public const MODEL_VIDEO_FIELD = [
         'id', 'course_id', 'title', 'slug', 'view_num', 'short_description', 'render_desc', 'seo_keywords',
-        'seo_description', 'published_at', 'charge', 'chapter_id', 'duration',
+        'seo_description', 'published_at', 'charge', 'chapter_id', 'duration', 'is_ban_sell',
     ];
     /**
      * @OpenApi\Annotations\Schemas(
@@ -97,12 +104,14 @@ class ApiV2Constant
      *         @OA\Property(property="role_expired_at",type="string",description="会员套餐到期时间"),
      *         @OA\Property(property="role",type="object",ref="#/components/schemas/Role"),
      *         @OA\Property(property="invite_balance",type="integer",description="邀请余额"),
+     *         @OA\Property(property="is_password_set",type="integer",description="是否配置了密码"),
+     *         @OA\Property(property="is_set_nickname",type="integer",description="是否设置了昵称"),
      *     ),
      * )
      */
-    const MODEL_MEMBER_FIELD = [
+    public const MODEL_MEMBER_FIELD = [
         'id', 'avatar', 'nick_name', 'mobile', 'is_lock', 'is_active', 'role_id', 'role_expired_at',
-        'invite_balance', 'role',
+        'invite_balance', 'role', 'is_password_set', 'is_set_nickname',
     ];
     /**
      * @OpenApi\Annotations\Schemas(
@@ -118,7 +127,7 @@ class ApiV2Constant
      *     ),
      * )
      */
-    const MODEL_ROLE_FIELD = [
+    public const MODEL_ROLE_FIELD = [
         'id', 'name', 'charge', 'expire_days', 'desc_rows',
     ];
     /**
@@ -133,12 +142,28 @@ class ApiV2Constant
      *     ),
      * )
      */
-    const MODEL_COURSE_CHAPTER_FIELD = [
+    public const MODEL_COURSE_CHAPTER_FIELD = [
         'id', 'course_id', 'title',
     ];
-    const MODEL_COURSE_CATEGORY_FIELD = [
+
+
+    /**
+     * @OpenApi\Annotations\Schemas(
+     *     @OA\Schema(
+     *         schema="CourseCategory",
+     *         type="object",
+     *         title="课程分类",
+     *         @OA\Property(property="id",type="integer",description="id"),
+     *         @OA\Property(property="name",type="string",description="分类名"),
+     *         @OA\Property(property="parent_id",type="integer",description="父id"),
+     *     ),
+     * )
+     */
+    public const MODEL_COURSE_CATEGORY_FIELD = [
         'id', 'name', 'parent_id',
     ];
+
+
     /**
      * @OpenApi\Annotations\Schemas(
      *     @OA\Schema(
@@ -152,9 +177,10 @@ class ApiV2Constant
      *     ),
      * )
      */
-    const MODEL_COURSE_COMMENT_FIELD = [
+    public const MODEL_COURSE_COMMENT_FIELD = [
         'id', 'user_id', 'render_content', 'created_at',
     ];
+
     /**
      * @OpenApi\Annotations\Schemas(
      *     @OA\Schema(
@@ -168,15 +194,16 @@ class ApiV2Constant
      *     ),
      * )
      */
-    const MODEL_VIDEO_COMMENT_FIELD = [
+    public const MODEL_VIDEO_COMMENT_FIELD = [
         'id', 'user_id', 'render_content', 'created_at',
     ];
+
     /**
      * @OpenApi\Annotations\Schemas(
      *     @OA\Schema(
      *         schema="Order",
      *         type="object",
-     *         title="订单商品",
+     *         title="订单",
      *         @OA\Property(property="id",type="integer",description="id"),
      *         @OA\Property(property="user_id",type="integer",description="用户id"),
      *         @OA\Property(property="charge",type="integer",description="总价"),
@@ -190,7 +217,7 @@ class ApiV2Constant
      *     ),
      * )
      */
-    const MODEL_ORDER_FIELD = [
+    public const MODEL_ORDER_FIELD = [
         'id', 'user_id', 'charge', 'order_id', 'payment_method', 'status_text', 'payment_text', 'continue_pay',
         'goods', 'created_at',
     ];
@@ -207,10 +234,24 @@ class ApiV2Constant
      *     ),
      * )
      */
-    const MODEL_ORDER_GOODS_FIELD = [
+    public const MODEL_ORDER_GOODS_FIELD = [
         'num', 'goods_text', 'charge', 'goods_type',
     ];
-    const MODEL_PROMO_CODE_FIELD = [
+
+    /**
+     * @OpenApi\Annotations\Schemas(
+     *     @OA\Schema(
+     *         schema="PromoCode",
+     *         type="object",
+     *         title="优惠码",
+     *         @OA\Property(property="id",type="integer",description="id"),
+     *         @OA\Property(property="code",type="string",description="优惠码"),
+     *         @OA\Property(property="expired_at",type="string",description="过期时间"),
+     *         @OA\Property(property="invited_user_reward",type="integer",description="被邀请奖励"),
+     *     ),
+     * )
+     */
+    public const MODEL_PROMO_CODE_FIELD = [
         'id', 'code', 'expired_at', 'invited_user_reward',
     ];
 
@@ -219,14 +260,14 @@ class ApiV2Constant
      *     @OA\Schema(
      *         schema="Slider",
      *         type="object",
-     *         title="订单商品",
+     *         title="幻灯片",
      *         @OA\Property(property="thumb",type="string",description="图片"),
      *         @OA\Property(property="url",type="string",description="url"),
      *         @OA\Property(property="sort",type="integer",description="升序"),
      *     ),
      * )
      */
-    const MODEL_SLIDER_FIELD = [
+    public const MODEL_SLIDER_FIELD = [
         'thumb', 'url', 'sort',
     ];
 
@@ -235,7 +276,7 @@ class ApiV2Constant
      *     @OA\Schema(
      *         schema="Notification",
      *         type="object",
-     *         title="订单商品",
+     *         title="消息",
      *         @OA\Property(property="id",type="string",description="消息id"),
      *         @OA\Property(property="notifiable_id",type="integer",description="notifiable_id"),
      *         @OA\Property(property="read_at",type="string",description="read_at"),
@@ -244,7 +285,7 @@ class ApiV2Constant
      *     ),
      * )
      */
-    const MODEL_NOTIFICATON_FIELD = [
+    public const MODEL_NOTIFICATON_FIELD = [
         'id', 'notifiable_id', 'data', 'read_at', 'created_at',
     ];
 }

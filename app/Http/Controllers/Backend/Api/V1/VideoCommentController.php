@@ -11,22 +11,55 @@
 
 namespace App\Http\Controllers\Backend\Api\V1;
 
-use App\Models\VideoComment;
+use Illuminate\Http\Request;
+use App\Services\Member\Models\User;
+use App\Services\Course\Models\Video;
+use App\Services\Course\Models\Course;
+use App\Services\Course\Models\VideoComment;
 
 class VideoCommentController extends BaseController
 {
-    public function index()
+    public function index(Request $request)
     {
-        $comments = VideoComment::with(['user', 'video.course'])
+        $courseId = $request->input('course_id');
+        $videoId = $request->input('video_id');
+        $comments = VideoComment::with(['video.course'])
+            ->when($courseId, function ($query) use ($courseId) {
+                $videoIds = Video::query()->select(['id'])->where('course_id', $courseId)->get()->pluck('id');
+                $query->whereIn('video_id', $videoIds);
+            })
+            ->when($videoId, function ($query) use ($videoId) {
+                $query->where('video_id', $videoId);
+            })
             ->orderByDesc('id')
-            ->paginate(request()->input('size', 12));
+            ->paginate($request->input('size', 20));
 
-        return $this->successData($comments);
+        $userIds = [];
+        foreach ($comments->items() as $item) {
+            $userIds[$item->user_id] = 0;
+        }
+        $users = User::query()
+            ->whereIn('id', array_keys($userIds))
+            ->select(['id', 'nick_name', 'avatar', 'mobile'])
+            ->get()
+            ->keyBy('id');
+
+        $courses = Course::query()->select(['id', 'title'])->get();
+        $videos = Video::query()->select(['id', 'title', 'course_id'])->get()->groupBy('course_id');
+
+        return $this->successData([
+            'data' => $comments,
+            'courses' => $courses,
+            'videos' => $videos,
+            'users' => $users,
+        ]);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        VideoComment::destroy($id);
+        $ids = $request->input('ids');
+
+        VideoComment::destroy($ids);
 
         return $this->success();
     }

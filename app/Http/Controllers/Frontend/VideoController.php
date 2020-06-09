@@ -106,10 +106,18 @@ class VideoController extends FrontendController
         // 课程章节
         $chapters = $this->courseService->chapters($video['course_id']);
         $videos = $this->videoService->courseVideos($video['course_id']);
+
+        // 是否可以观看视频
         $canSeeVideo = false;
+        // 课程视频观看进度
+        $videoWatchedProgress = [];
+
         if (Auth::check()) {
             $canSeeVideo = $this->businessState->canSeeVideo($this->user(), $video['course'], $video);
             $canSeeVideo && $this->courseService->recordUserCount(Auth::id(), $course['id']);
+
+            $userVideoWatchRecords = $this->userService->getUserVideoWatchRecords(Auth::id(), $course['id']);
+            $videoWatchedProgress = array_column($userVideoWatchRecords, null, 'video_id');
         }
 
         // 下一个视频
@@ -168,7 +176,8 @@ class VideoController extends FrontendController
             'canSeeVideo',
             'scene',
             'playUrls',
-            'nextVideo'
+            'nextVideo',
+            'videoWatchedProgress'
         ));
     }
 
@@ -182,6 +191,10 @@ class VideoController extends FrontendController
         $video = $this->videoService->find($id);
         if ($this->userService->hasVideo(Auth::id(), $video['id'])) {
             flash(__('You have already purchased this course'), 'success');
+            return back();
+        }
+        if ($video['is_ban_sell'] === FrontendConstant::YES) {
+            flash(__('this video cannot be sold'));
             return back();
         }
         $course = $this->courseService->find($video['course_id']);
@@ -200,11 +213,19 @@ class VideoController extends FrontendController
         return v('frontend.order.create', compact('goods', 'title', 'total', 'scene', 'payments'));
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function buyHandler(Request $request)
     {
         $id = $request->input('goods_id');
         $promoCodeId = abs((int)$request->input('promo_code_id', 0));
         $video = $this->videoService->find($id);
+        if ($video['is_ban_sell'] === FrontendConstant::YES) {
+            flash(__('this video cannot be sold'));
+            return back();
+        }
         if ($video['charge'] <= 0) {
             flash(__('video cant buy'));
             return back();

@@ -93,11 +93,10 @@ if (!function_exists('markdown_to_html')) {
 
 if (!function_exists('aliyun_play_auth')) {
     /**
-     * 获取阿里云视频的播放Auth.
+     * 获取阿里云视频的播放Auth
      *
-     * @param \App\Models\Video $video
-     *
-     * @return mixed|SimpleXMLElement
+     * @param array $video
+     * @return SimpleXMLElement|string
      */
     function aliyun_play_auth($video)
     {
@@ -384,6 +383,7 @@ if (!function_exists('get_tencent_play_url')) {
             $client = new \TencentCloud\Vod\V20180717\VodClient($credential, '');
             $req = new \TencentCloud\Vod\V20180717\Models\DescribeMediaInfosRequest();
             $req->FileIds[] = $vid;
+            $req->SubAppId = (int)$config['app_id'];
             /**
              * @var $response \TencentCloud\Vod\V20180717\Models\DescribeMediaInfosResponse
              */
@@ -477,5 +477,25 @@ if (!function_exists('is_dev')) {
     function is_dev()
     {
         return app()->environment(['dev', 'local']);
+    }
+}
+
+if (!function_exists('get_array_ids')) {
+    /**
+     * @param array $data
+     * @param string $key
+     * @return array
+     */
+    function get_array_ids(array $data, string $key = 'id'): array
+    {
+        $ids = [];
+        foreach ($data as $item) {
+            $id = $item[$key] ?? false;
+            if ($id === false) {
+                continue;
+            }
+            $ids[$id] = 0;
+        }
+        return array_keys($ids);
     }
 }

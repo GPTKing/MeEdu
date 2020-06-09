@@ -35,11 +35,11 @@
     </div>
 
     <div class="course-info-menu">
-        <div class="menu-item active"
+        <div class="menu-item"
              onclick="$(this).addClass('active').siblings().removeClass('active');$('.course-content-tab-item').hide();$('.course-description').show();">
             <a href="javascript:void(0)">介绍</a>
         </div>
-        <div class="menu-item"
+        <div class="menu-item active"
              onclick="$(this).addClass('active').siblings().removeClass('active');$('.course-content-tab-item').hide();$('.course-chapter').show();">
             <a href="javascript:void(0)">目录</a>
         </div>
@@ -56,9 +56,9 @@
         @endif
     </div>
 
-    <div class="course-description course-content-tab-item">{!! $video['render_desc'] !!}</div>
+    <div class="course-description course-content-tab-item" style="display: none">{!! $video['render_desc'] !!}</div>
 
-    <div class="course-chapter course-content-tab-item">
+    <div class="course-chapter course-content-tab-item" style="display: block">
         @if($chapters)
             @foreach($chapters as $chapter)
                 <div class="chapter-title">{{$chapter['title']}}</div>
@@ -141,11 +141,21 @@
             </div>
             <div class="title">此套课程需付费，请选择</div>
             <a href="{{route('role.index')}}" class="active">成为会员所有视频免费看</a>
-            <a href="{{route('member.video.buy', [$video['id']])}}">单独购买此条视频 ￥{{$video['charge']}}</a>
+            @if($video['is_ban_sell'] !== \App\Constant\FrontendConstant::YES)
+                <a href="{{route('member.video.buy', [$video['id']])}}">单独购买此条视频 ￥{{$video['charge']}}</a>
+            @endif
             @if($course['charge'] > 0)
                 <a href="{{route('member.course.buy', [$course['id']])}}">订阅此套课程 ￥{{$course['charge']}}</a>
             @endif
         </div>
     </div>
 
+@endsection
+
+@section('js')
+    <script>
+        $(function () {
+            $('.course-description').find('img').attr('width', 'auto').attr('height', 'auto');
+        });
+    </script>
 @endsection
