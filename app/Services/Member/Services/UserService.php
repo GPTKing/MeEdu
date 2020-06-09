@@ -411,7 +411,7 @@ class UserService implements UserServiceInterface
      */
     public function getCurrentUserCourseCount(): int
     {
-        return (int) UserCourse::whereUserId(Auth::id())->count();
+        return (int)UserCourse::whereUserId(Auth::id())->count();
     }
 
     /**
@@ -419,7 +419,7 @@ class UserService implements UserServiceInterface
      */
     public function getCurrentUserVideoCount(): int
     {
-        return (int) UserVideo::whereUserId(Auth::id())->count();
+        return (int)UserVideo::whereUserId(Auth::id())->count();
     }
 
     /**
@@ -522,11 +522,13 @@ class UserService implements UserServiceInterface
             ->where('video_id', $videoId)
             ->first();
 
-        if ($record && $record->watched_at === null && $record->watch_seconds < $duration) {
-            // 如果有记录，那么在没有看完的情况下继续记录
-            $data = ['watch_seconds' => $duration];
-            $isWatched && $data['watched_at'] = Carbon::now();
-            $record->fill($data)->save();
+        if ($record) {
+            if ($record->watched_at === null && $record->watch_seconds < $duration) {
+                // 如果有记录，那么在没有看完的情况下继续记录
+                $data = ['watch_seconds' => $duration];
+                $isWatched && $data['watched_at'] = Carbon::now();
+                $record->fill($data)->save();
+            }
         } else {
             UserVideoWatchRecord::create([
                 'user_id' => $userId,
@@ -554,6 +556,18 @@ class UserService implements UserServiceInterface
     }
 
     /**
+     * 获取课程的最新一条观看记录
+     * @param int $userId
+     * @param int $courseId
+     * @return array
+     */
+    public function getLatestRecord(int $userId, int $courseId): array
+    {
+        $record = UserVideoWatchRecord::query()->where('user_id', $userId)->where('course_id', $courseId)->orderByDesc('updated_at')->first();
+        return $record ? $record->toArray() : [];
+    }
+
+    /**
      * @param int $id
      */
     public function setUsedPromoCode(int $id): void
@@ -577,5 +591,17 @@ class UserService implements UserServiceInterface
     public function setRegisterArea(int $id, string $area): void
     {
         $area && User::query()->where('id', $id)->update(['register_area' => $area]);
+    }
+
+    /**
+     * 重置会员过期用户
+     *
+     * @return int
+     */
+    public function resetRoleExpiredUsers(): int
+    {
+        return User::query()
+            ->where('role_expired_at', '<=', Carbon::now())
+            ->update(['role_id' => 0, 'role_expired_at' => null]);
     }
 }
