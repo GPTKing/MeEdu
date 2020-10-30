@@ -110,8 +110,8 @@ class MemberController extends FrontendController
     {
         $title = __('page_title_member_index');
 
-        $courseCount = $this->userService->getCurrentUserCourseCount();
-        $videoCount = $this->userService->getCurrentUserVideoCount();
+        $courseCount = $this->userService->getUserCourseCount($this->id());
+        $videoCount = $this->userService->getUserVideoCount($this->id());
 
         $apps = $this->socialiteService->userSocialites(Auth::id());
         $apps = array_column($apps, null, 'app');
@@ -173,11 +173,7 @@ class MemberController extends FrontendController
     }
 
     /**
-     * 头像更换.
-     *
      * @param AvatarChangeRequest $request
-     * @param MemberRepository $repository
-     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function avatarChangeHandler(AvatarChangeRequest $request)
@@ -454,5 +450,14 @@ class MemberController extends FrontendController
 
         $title = __('title.member.credit1_records');
         return v('frontend.member.credit1_records', compact('title', 'records'));
+    }
+
+    public function showProfilePage()
+    {
+        $profile = $this->userService->getProfile($this->id());
+
+        $title = __('member.profile.edit');
+
+        return v('frontend.member.profile', compact('profile', 'title'));
     }
 }

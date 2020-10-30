@@ -1,4 +1,4 @@
-import swal from 'sweetalert';
+import Swal from 'sweetalert2';
 
 import Player from 'xgplayer';
 import HlsJsPlayer from 'xgplayer-hls.js';
@@ -23,7 +23,7 @@ let marquee = function () {
             let width = root.offsetWidth;
             width = width > 50 ? (width - 30) : width;
             marquee.style['top'] = randomNumber(0, height) + 'px';
-            marquee.style['right'] = randomNumber(0, height) + 'px';
+            marquee.style['right'] = randomNumber(0, width) + 'px';
             root.appendChild(marquee);
             setTimeout(() => {
                 marquee.remove();
@@ -36,17 +36,19 @@ let marquee = function () {
         }, 2100);
     }
 }
+
 Player.install('marquee', marquee);
+HlsJsPlayer.install('marquee', marquee);
 
 window.Player = Player;
 window.HlsJsPlayer = HlsJsPlayer;
 
 window.flashSuccess = function (message) {
-    swal('成功', message, 'success');
+    Swal.fire('成功', message, 'success');
 };
 window.flashWarning = function (message) {
-    swal('警告', message, 'warning');
+    Swal.fire('警告', message, 'warning');
 };
 window.flashError = function (message) {
-    swal('失败', message, 'error');
+    Swal.fire('失败', message, 'error');
 };

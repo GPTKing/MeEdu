@@ -15,23 +15,16 @@ class ApiV2Constant
 {
     public const YES = 1;
 
-    public const PARAMS_ERROR = 'params error';
     public const PLEASE_INPUT_IMAGE_CAPTCHA = 'image_captcha.required';
     public const IMAGE_CAPTCHA_ERROR = 'image_captcha_error';
 
     public const USER_MOBILE_NOT_EXISTS = 'mobile not exists';
-    public const MOBILE_HAS_EXISTS = 'mobile has exists';
     public const MOBILE_OR_PASSWORD_ERROR = 'mobile not exists or password error';
     public const MOBILE_CODE_ERROR = 'mobile code error';
 
     public const MEMBER_HAS_LOCKED = 'current user was locked,please contact administrator';
 
     public const VIDEO_NO_AUTH = 'please buy this video before see';
-
-    public const SMS_CODE_EXPIRE = 60;
-    public const MOBILE_CODE_CACHE_KEY = 'm:%s';
-
-    public const WECHAT_MINI_LOGIN_SESSION_KEY = 'wxmn:s:%s';
 
     public const ERROR_CODE = 1;
     public const ERROR_NO_AUTH_CODE = 401;
@@ -323,5 +316,32 @@ class ApiV2Constant
      */
     public const MODEL_COURSE_ATTACH_FIELD = [
         'id', 'name', 'size', 'extension',
+    ];
+
+    /**
+     * @OpenApi\Annotations\Schemas(
+     *     @OA\Schema(
+     *         schema="MemberProfile",
+     *         type="object",
+     *         title="用户资料",
+     *         @OA\Property(property="real_name",type="string",description="真实姓名"),
+     *         @OA\Property(property="age",type="integer",description="年龄"),
+     *         @OA\Property(property="gender",type="string",description="性别"),
+     *         @OA\Property(property="birthday",type="string",description="生日"),
+     *         @OA\Property(property="profession",type="string",description="职业"),
+     *         @OA\Property(property="address",type="string",description="住址"),
+     *         @OA\Property(property="graduated_school",type="string",description="毕业院校"),
+     *         @OA\Property(property="diploma",type="string",description="毕业证书照"),
+     *         @OA\Property(property="id_number",type="string",description="身份证号"),
+     *         @OA\Property(property="id_frontend_thumb",type="string",description="身份证正面照"),
+     *         @OA\Property(property="id_backend_thumb",type="string",description="身份证反面照"),
+     *         @OA\Property(property="id_hand_thumb",type="string",description="手持身份证照"),
+     *     ),
+     * )
+     */
+    public const MODEL_MEMBER_PROFILE_FIELD = [
+        'real_name', 'gender', 'age', 'birthday', 'profession', 'address',
+        'graduated_school', 'diploma',
+        'id_number', 'id_frontend_thumb', 'id_backend_thumb', 'id_hand_thumb',
     ];
 }
